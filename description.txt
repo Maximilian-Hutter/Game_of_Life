@@ -1,0 +1,9 @@
+A programm for me to play with inspired by john conways game of life
+the rules will be slightly changed and it will be more visually appealing
+
+changed stuff:
+
+to-do:
+make graphics nice
+make color relevant
+change rules to be more "active"
