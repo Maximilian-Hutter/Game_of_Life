@@ -48,7 +48,11 @@ def get_neighbors(grid, index):
 
     return neighbors
 
-def set_deaths(grid, SIZE):
+
+
+def advance_iteration(grid,SIZE):    # check which cells are dead and which are alive and advance the game
+    
+    # deaths calc
 
     new_grid = np.ones((SIZE,SIZE))
     indices = np.argwhere(grid==True)
@@ -71,35 +75,40 @@ def set_deaths(grid, SIZE):
             if count[1] > 3:
                 new_grid[index[0],index[1]] = 0
 
-    grid = np.logical_and(grid,new_grid)
 
-    return grid
-
-def set_life(grid,SIZE):
-
+    # new life
     new_grid = np.zeros((SIZE,SIZE))
-    indices = np.argwhere(grid==False)
 
-    for i, index in enumerate(indices, start=0):
+    num_neighbor = 1
 
-        neighbors = get_neighbors(grid,index)
-        _,count = np.unique(neighbors, return_counts=True)
-        count[0] = count[0] - 1
-        try:
-            if count[1] == 3:
-                new_grid[index[0], index[1]] = 1
-        except:
-            count = [count[0], 0]
-            if count[1] == 3:
-                new_grid[index[0], index[1]] = 1
+    for index in indices:
+        left = index[0]-num_neighbor
+        right = index[0]+num_neighbor
+
+        bottom = index[1]-num_neighbor
+        top = index[1]+num_neighbor
+
+        for i in range(left, right):
+            for a in range(bottom, top):
+                if grid[i,a] == False:
+                    index = [i,a]
+
+                    neighbors = get_neighbors(grid,index)
+                    _,count = np.unique(neighbors, return_counts=True)
+                    count[0] = count[0] - 1
+                    try:
+                        if count[1] == 3:
+                            new_grid[index[0], index[1]] = 1
+                    except:
+                        count = [count[0], 0]
+                        if count[1] == 3:
+                            new_grid[index[0], index[1]] = 1
+
 
     grid = np.logical_or(grid,new_grid)
 
-    return grid
+    # deaths overwrite
 
-def advance_iteration(grid,SIZE):    # check which cells are dead and which are alive and advance the game
-    
-    grid = set_life(grid,SIZE)
-    grid = set_deaths(grid,SIZE)
+    grid = np.logical_and(grid,new_grid)
 
     return grid
